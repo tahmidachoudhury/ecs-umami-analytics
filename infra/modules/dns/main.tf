@@ -20,7 +20,7 @@ resource "aws_route53_record" "cert_validation" {
   allow_overwrite = true
 }
 
-resource "aws_route53_record" "analytics" {
+resource "aws_route53_record" "app" {
   zone_id = data.aws_route53_zone.main.zone_id
   name    = var.subdomain_name
   type    = "A"

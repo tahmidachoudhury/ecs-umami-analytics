@@ -5,6 +5,6 @@ output "cert_validation_fqdns" {
   ]
 }
 
-output "analytics_url" {
-  value = "https://${aws_route53_record.analytics.fqdn}"
+output "app_url" {
+  value = "https://${aws_route53_record.app.fqdn}"
 }

@@ -18,7 +18,7 @@ module "alb" {
   alb_sg_id           = module.security_groups.alb_sg_id
   public_subnets      = module.networking.public_subnet_ids
   vpc_id              = module.networking.vpc_id
-  acm_certificate_arn = module.acm.analytics_certificate_arn
+  acm_certificate_arn = module.acm.app_certificate_arn
 }
 
 module "cloudwatch" {

@@ -1,6 +1,6 @@
-output "analytics_certificate_arn" {
+output "app_certificate_arn" {
   description = "The ACM certificate for the load balancer on HTTPS."
-  value       = aws_acm_certificate_validation.analytics.certificate_arn
+  value       = aws_acm_certificate_validation.app.certificate_arn
 }
 
 output "domain_validation_options" {

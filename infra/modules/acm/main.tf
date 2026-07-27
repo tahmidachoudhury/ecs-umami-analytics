@@ -12,7 +12,7 @@ resource "aws_acm_certificate" "cert" {
   }
 }
 
-resource "aws_acm_certificate_validation" "analytics" {
+resource "aws_acm_certificate_validation" "app" {
   certificate_arn = aws_acm_certificate.cert.arn
 
   validation_record_fqdns = var.validation_record_fqdns

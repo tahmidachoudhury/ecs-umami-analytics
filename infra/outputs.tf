@@ -3,7 +3,7 @@ output "alb_url" {
   description = "DNS name of the load balancer."
 }
 
-output "analytics_url" {
-  value       = module.dns.analytics_url
+output "app_url" {
+  value       = module.dns.app_url
   description = "The https url of the application."
 }
