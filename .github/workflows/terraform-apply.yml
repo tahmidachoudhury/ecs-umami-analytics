@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - "Infra/**"
-      - "!Infra/envs/*.tfvars"
+      - "infra/**"
+      - "!infra/envs/*.tfvars"
 
   workflow_dispatch:
 
