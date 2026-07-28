@@ -1,13 +1,6 @@
 name: Terraform Apply
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "infra/**"
-      - "!infra/envs/*.tfvars"
-
   workflow_dispatch:
 
 permissions:
