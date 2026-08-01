@@ -93,5 +93,3 @@ module "dns" {
   alb_zone_id               = module.alb.alb_zone_id
   domain_validation_options = module.acm.domain_validation_options
 }
-
-# testing
