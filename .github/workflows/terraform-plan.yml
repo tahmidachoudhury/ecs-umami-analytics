@@ -32,7 +32,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v6.1.0
         with:
           aws-region: ${{secrets.AWS_REGION}}
-          role-to-assume: ${{secrets.AWS_IAM_ARN}}
+          role-to-assume: ${{secrets.AWS_IAM_TF_PLAN}}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
