@@ -1,6 +1,6 @@
 environment = "dev"
 
-container_image = "851725183654.dkr.ecr.eu-west-2.amazonaws.com/umami-ecs-app-dev:3712dc2f2df26fe532690b99ff3272a5ae41be69"
+bootstrap_image = "public.ecr.aws/docker/library/nginx:alpine"
 
 subdomain_name = "analytics.tahmidchoudhury.uk"
 

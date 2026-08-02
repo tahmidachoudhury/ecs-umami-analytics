@@ -21,10 +21,11 @@ resource "aws_ecs_task_definition" "app" {
   memory                   = var.memory
   task_role_arn            = var.task_role_arn
   execution_role_arn       = var.execution_role_arn
+
   container_definitions = jsonencode([
     {
-      name      = var.container_name
-      image     = var.container_image
+      name      = "app"
+      image     = var.bootstrap_image
       essential = true
       portMappings = [
         {
@@ -75,6 +76,10 @@ resource "aws_ecs_task_definition" "app" {
     },
   ])
 
+  lifecycle {
+    ignore_changes = [container_definitions]
+  }
+
   tags = {
     Name        = "${var.project_name}-task-def"
     Environment = var.environment
@@ -88,6 +93,11 @@ resource "aws_ecs_service" "app" {
   desired_count   = var.number_of_tasks
   launch_type     = "FARGATE"
 
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+
   network_configuration {
     security_groups  = [var.ecs_sg_id]
     subnets          = var.private_subnet_ids
@@ -96,8 +106,12 @@ resource "aws_ecs_service" "app" {
 
   load_balancer {
     target_group_arn = var.alb_target_group_arn
-    container_name   = var.container_name
+    container_name   = "app"
     container_port   = var.container_port
+  }
+
+  lifecycle {
+    ignore_changes = [task_definition, desired_count]
   }
 
   tags = {

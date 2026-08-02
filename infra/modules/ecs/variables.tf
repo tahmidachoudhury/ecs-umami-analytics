@@ -8,11 +8,6 @@ variable "environment" {
   description = "The deployment environment (dev or prod)"
 }
 
-variable "container_image" {
-  type        = string
-  description = "The latest container image for the app from AWS ECR."
-}
-
 variable "cpu" {
   type        = number
   description = "The unit of CPU that the task definition needs."
@@ -58,9 +53,9 @@ variable "container_port" {
   type        = number
 }
 
-variable "container_name" {
+variable "bootstrap_image" {
+  description = "Full image reference for the app container. Bootstrap value only; the deploy pipeline owns revisions after the first apply."
   type        = string
-  description = "The name of the ECS container: defaults to project name."
 }
 
 variable "ecs_sg_id" {

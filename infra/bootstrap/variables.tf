@@ -19,7 +19,7 @@ variable "image_tag_mutability" {
   description = "The tag mutability setting for the repository."
   type        = string
   # OPTIONS: MUTABLE, IMMUTABLE, IMMUTABLE_WITH_EXCLUSION, or MUTABLE_WITH_EXCLUSION
-  default = "IMMUTABLE_WITH_EXCLUSION"
+  default = "IMMUTABLE"
 }
 
 variable "bucket_name" {

@@ -14,12 +14,8 @@ variable "aws_region" {
   description = "The AWS region of where the resources are deployed."
 }
 
-locals {
-  container_name = "${var.project_name}-container"
-}
-
-variable "container_image" {
-  description = "Full ECR image URI for the backend container."
+variable "bootstrap_image" {
+  description = "Full image reference for the app container. Bootstrap value only; the deploy pipeline owns revisions after the first apply."
   type        = string
 }
 

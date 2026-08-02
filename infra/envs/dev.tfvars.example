@@ -3,7 +3,7 @@
 
 environment = "dev"
 
-container_image = "YOUR_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/umami-ecs-app-dev:latest"
+bootstrap_image = "YOUR_ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/umami-ecs-app-dev:latest"
 
 subdomain_name = "example.yourdomain.com"
 

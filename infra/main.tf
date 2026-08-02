@@ -56,8 +56,7 @@ module "ecs" {
   aws_region                = var.aws_region
   ecs_sg_id                 = module.security_groups.ecs_sg_id
   private_subnet_ids        = module.networking.private_subnet_ids
-  container_name            = local.container_name
-  container_image           = var.container_image
+  bootstrap_image           = var.bootstrap_image
   alb_target_group_arn      = module.alb.target_group_arn
   task_role_arn             = module.iam.ecs_task_role_arn
   execution_role_arn        = module.iam.execution_role_arn

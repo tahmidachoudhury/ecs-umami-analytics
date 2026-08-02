@@ -1,8 +1,3 @@
-moved {
-  from = module.ecr.aws_ecr_repository.repo
-  to   = aws_ecr_repository.repo
-}
-
 resource "aws_ecr_repository" "repo" {
   name                 = "${var.project_name}-${var.environment}"
   image_tag_mutability = var.image_tag_mutability
