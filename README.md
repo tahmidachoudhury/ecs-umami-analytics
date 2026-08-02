@@ -115,12 +115,13 @@ infra
 ## Features
 
 - Reduced application image from 3GB to 770MB with multi-stage Docker build
+- Immutable, SHA-tagged container images in ECR
+- Zero-touch ECS deploys with automatic rollback on failed health checks
 - Terraform infrastructure seperated into modules for reusability and easy debugging
 - Terraform state managed remotely via S3 with native state locking
 - IAM roles follow least privilege principle throughout
 - CI/CD workflows require admin approval before being triggered
-- IAM roles follow least privilege principle throughout
-- Full custom VPC set up for added security
+- Custom VPC with private subnets for ECS tasks and RDS, public ingress only via ALB
 - Observability and monitoring over RDS and ECS tasks with AWS CloudWatch
 
 ## How to set up locally
