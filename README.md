@@ -10,8 +10,9 @@ I built this project to showcase my cloud, networking, and infrastructure skills
 
 - [Demo](#demo)
 - [Architecture](#architecture)
-- [Technology Stack](#technology-stack)
+- [Infrastructure Components](#infrastructure-components)
 - [Repository Structure](#repository-structure)
+- [Features](#features)
 - [Local Development](#how-to-set-up-locally)
 - [CI/CD](#cicd)
 - [Author](#author)
@@ -32,56 +33,37 @@ I built this project to showcase my cloud, networking, and infrastructure skills
 
 The infrastructure is designed for high availability, security, and scalability.
 
-Key components:
+---
 
-- VPC with public and private subnets across multiple AZs
-- Application Load Balancer (ALB) with a health check on `/api/heartbeat`
-- ECS Fargate service running tasks in private subnets
-- CloudWatch enabled for DB and Task logs
-- NAT Gateway for outbound internet access from private subnets
-- ACM certificate for HTTPS
-- Route 53 for DNS
-- S3 for a remote Terraform statefile with state-lock enabled
-- GitHub Actions for CI/CD using OIDC
+## Infrastructure Components
+
+| Component        | Details                                                                |
+| ---------------- | ---------------------------------------------------------------------- |
+| VPC              | Custom VPC with public and private subnets across 2 availability zones |
+| Public Subnets   | 2 public subnets hosting the ALB and NAT Gateway                       |
+| Private Subnets  | 2 private subnets hosting ECS Fargate tasks                            |
+| Internet Gateway | Public internet access for the ALB                                     |
+| NAT Gateway      | Outbound internet access for ECS tasks in private subnets              |
+| ALB              | Application Load Balancer with HTTP to HTTPS redirect                  |
+| ACM              | SSL certificate for HTTPS with Route53 DNS validation                  |
+| ECS Fargate      | Containerised app running on serverless compute                        |
+| ECR              | Docker image repository                                                |
+| IAM              | ECS task execution role and task service role with least privilege     |
+| CloudWatch       | Container log groups and log streaming for observability               |
+| Route53          | DNS management and ACM certificate validation                          |
+| S3               | Terraform remote state storage with native state locking               |
 
 ---
 
-## Technology Stack
+## Security
 
-### Cloud & Infrastructure
-
-- AWS ECS Fargate
-- AWS ECR
-- AWS ALB (Application Load Balancer)
-- AWS Route53
-- AWS ACM
-- AWS RDS PostgreSQL
-- AWS VPC
-
-### Infrastructure as Code
-
-- Terraform
-- Modular Terraform Architecture
-
-### CI/CD & Automation
-
-- GitHub Actions
-- Docker
-- Docker Compose
-
-### Backend & Application
-
-- PostgreSQL
-- Umami Analytics
-  - Node.js
-
-### Networking & Security
-
-- Security Groups
-- Public & Private Subnets
-- NAT Gateway
-- IAM Roles & Policies
-- HTTPS / TLS
+- Only approved admins can trigger workflows through GitHub Environments
+- ECS tasks run in private subnets with no public IP assigned
+- IAM least privilege roles scoped to only required permissions
+- OIDC authentication in CI/CD pipeline eliminates long-lived AWS credentials
+- Multi-stage Docker build minimises attack surface and image size
+- HTTPS enforced across all traffic, HTTP redirects to HTTPS
+- Security groups restrict ECS task access to ALB only
 
 ---
 
@@ -129,6 +111,17 @@ infra
 ```
 
 ---
+
+## Features
+
+- Reduced application image from 3GB to 770MB with multi-stage Docker build
+- Terraform infrastructure seperated into modules for reusability and easy debugging
+- Terraform state managed remotely via S3 with native state locking
+- IAM roles follow least privilege principle throughout
+- CI/CD workflows require admin approval before being triggered
+- IAM roles follow least privilege principle throughout
+- Full custom VPC set up for added security
+- Observability and monitoring over RDS and ECS tasks with AWS CloudWatch
 
 ## How to set up locally
 
