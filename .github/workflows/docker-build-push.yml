@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "app/**"
+  workflow_dispatch:
 
 env:
   ECR_REPOSITORY: ${{secrets.ECR_REPOSITORY}}
@@ -23,6 +24,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -39,10 +42,6 @@ jobs:
       - name: Install dependencies
         working-directory: app
         run: pnpm install --frozen-lockfile
-
-      # - name: Lint
-      #   working-directory: app
-      #   run: pnpm lint
 
       - name: Run Tests
         working-directory: app
@@ -83,5 +82,58 @@ jobs:
           context: app/
           file: app/Dockerfile
           push: true
+          # change the no-cache to make the pipeline faster
           no-cache: true
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      - name: Deploy to ECS
+        env:
+          CLUSTER: umami-ecs-app-dev-cluster
+          SERVICE: umami-ecs-app
+          FAMILY: umami-ecs-app
+          CONTAINER: app
+          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+        run: |
+          set -euo pipefail
+          echo "Deploying $IMAGE_URI to $CLUSTER/$SERVICE"
+
+          TASK_DEF=$(aws ecs describe-task-definition \
+            --task-definition "$FAMILY" \
+            --query 'taskDefinition' \
+            --output json)
+
+          NEW_TASK_DEF=$(echo "$TASK_DEF" | jq \
+            --arg IMAGE "$IMAGE_URI" \
+            --arg NAME "$CONTAINER" \
+            '(.containerDefinitions[] | select(.name == $NAME) | .image) = $IMAGE
+             | del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
+                   .compatibilities, .registeredAt, .registeredBy, .deregisteredAt)')
+
+          NEW_TASK_ARN=$(aws ecs register-task-definition \
+            --cli-input-json "$NEW_TASK_DEF" \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "Registered $NEW_TASK_ARN"
+
+          aws ecs update-service \
+            --cluster "$CLUSTER" \
+            --service "$SERVICE" \
+            --task-definition "$NEW_TASK_ARN" \
+            --no-cli-pager > /dev/null
+
+      - name: Wait for deployment
+        env:
+          CLUSTER: umami-ecs-app-dev-cluster
+          SERVICE: umami-ecs-app
+        run: |
+          set -euo pipefail
+          aws ecs wait services-stable --cluster "$CLUSTER" --services "$SERVICE"
+
+          STATE=$(aws ecs describe-services \
+            --cluster "$CLUSTER" --services "$SERVICE" \
+            --query 'services[0].deployments[0].rolloutState' \
+            --output text)
+
+          echo "Rollout state: $STATE"
+          [ "$STATE" = "COMPLETED" ]
